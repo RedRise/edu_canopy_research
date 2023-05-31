@@ -39,9 +39,12 @@ mesures[,length(POIDS),by=TYPES]
 
 res <- kmeans(mesures[1:500,list(LONGUEUR, LARGEUR, EPAISSEUR)], 4)
 
+# gardons les résultats sous la forme de lettres, pour mieux les distinguer des classes d'entrée
+fit_letters <- letters[res$cluster]
+
 output <- mesures[1:500, list(TOT_LONG, POIDS, TYPES)]
 # Nous passons les resultats en "facteurs" c.a.d. en texte
-output[,"TYPES_FIT"] <- as.factor(res$cluster)
+output[,"TYPES_FIT"] <- fit_letters
 
 # On explore une library graphique plus sophistiquée ggplot2
 require("ggplot2")
@@ -51,7 +54,10 @@ ggplot(output, aes(x=TOT_LONG, y=POIDS)) + geom_point()
 ggplot(output, aes(x=TOT_LONG, y=POIDS, col=TYPES, shape=TYPES_FIT)) + geom_point(size=4)
 
 # Zoomons sur la premiere catégorie
+# Pas pratique si on garde la même couleur
 ggplot(output[TYPES==4], aes(x=TOT_LONG, y=POIDS, col=TYPES, shape=TYPES_FIT)) + geom_point(size=4)
+# Distinguons les couleurs par résultats/fit
+type <- 4; ggplot(output[TYPES==type], aes(x=TOT_LONG, y=POIDS, col=TYPES_FIT, shape=TYPES_FIT)) + geom_point(size=4) + ggtitle(paste("Zoom sur le type", type))
 
 #
 table(output[,list(TYPES, TYPES_FIT)])
